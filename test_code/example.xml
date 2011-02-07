@@ -1,0 +1,121 @@
+<?xml version="1.0"?>
+<!DOCTYPE classads SYSTEM "classads.dtd">
+<classads>
+
+<c>
+    <a n="MyType"><s>Job</s></a>
+    <a n="TargetType"><s>Machine</s></a>
+    <a n="CommittedSlotTime"><i>0</i></a>
+    <a n="PeriodicRemove"><e>( ( JobStatus == 2 ) &amp;&amp; ( ( CurrentTime - EnteredCurrentStatus ) &gt; 43200 ) )</e></a>
+    <a n="Out"><s>cden_results_03_0.2_300.stdout</s></a>
+    <a n="PublicClaimId"><s>&lt;172.16.1.18:54373&gt;#1297028486#1#...</s></a>
+    <a n="ImageSize_RAW"><i>1169288</i></a>
+    <a n="RemoteHost"><s>glidein_21781@node018</s></a>
+    <a n="NumCkpts_RAW"><i>0</i></a>
+    <a n="NumShadowStarts"><i>1</i></a>
+    <a n="CommittedSuspensionTime"><i>0</i></a>
+    <a n="EnteredCurrentStatus"><i>1297028525</i></a>
+    <a n="JobStartDate"><i>1297028525</i></a>
+    <a n="NumSystemHolds"><i>0</i></a>
+    <a n="WhenToTransferOutput"><s>ON_EXIT</s></a>
+    <a n="StreamOut"><b v="f"/></a>
+    <a n="NumRestarts"><i>0</i></a>
+    <a n="Cmd"><s>/home/odonovan/den/den_jobs_mk6_repeat/./den_refine.sh</s></a>
+    <a n="ImageSize"><i>1250000</i></a>
+    <a n="NumJobMatches"><i>1</i></a>
+    <a n="x509UserProxyVOName"><s>SBGrid</s></a>
+    <a n="OrigMaxHosts"><i>1</i></a>
+    <a n="CurrentHosts"><i>1</i></a>
+    <a n="Iwd"><s>/home/odonovan/den/den_jobs_mk6_repeat/rd_03_0.2_300</s></a>
+    <a n="ExecutableSize_RAW"><i>2</i></a>
+    <a n="CumulativeSlotTime"><i>0</i></a>
+    <a n="RemoteUserCpu"><r>1.314500000000000E+04</r></a>
+    <a n="CondorVersion"><s>$CondorVersion: 7.5.4 Oct 18 2010 BuildID: 280908 $</s></a>
+    <a n="NumCkpts"><i>0</i></a>
+    <a n="LastJobLeaseRenewal"><i>1297042528</i></a>
+    <a n="RemoteSysCpu"><r>1.800000000000000E+01</r></a>
+    <a n="JobStatus"><i>2</i></a>
+    <a n="OnExitRemove"><b v="t"/></a>
+    <a n="BufferBlockSize"><i>32768</i></a>
+    <a n="In"><s>/dev/null</s></a>
+    <a n="ClusterId"><i>14738436</i></a>
+    <a n="LocalUserCpu"><r>0.000000000000000E+00</r></a>
+    <a n="x509UserProxyFQAN"><s>/DC=org/DC=doegrids/OU=People/CN=Daniel J. O'Donovan 111490,/SBGrid/Role=NULL/Capability=NULL,/SBGrid/CoreTeam/Role=NULL/Capability=NULL</s></a>
+    <a n="LastRejMatchTime"><i>1297028495</i></a>
+    <a n="StartdIpAddr"><s>&lt;172.16.1.18:54373?CCBID=134.174.140.112:9660#105335&gt;</s></a>
+    <a n="MinHosts"><i>1</i></a>
+    <a n="JobUniverse"><i>5</i></a>
+    <a n="Environment"><s></s></a>
+    <a n="ShadowBday"><i>1297028525</i></a>
+    <a n="RequestDisk"><e>DiskUsage</e></a>
+    <a n="RootDir"><s>/</s></a>
+    <a n="NumJobStarts"><i>1</i></a>
+    <a n="WantRemoteIO"><b v="t"/></a>
+    <a n="JobCurrentStartDate"><i>1297028525</i></a>
+    <a n="RequestMemory"><e>ceiling(ifThenElse(JobVMMemory =!= undefined,JobVMMemory,ImageSize / 1024.000000))</e></a>
+    <a n="GlobalJobId"><s>glidein@glidein.nebiogrid.org#14738436.0#1297028387</s></a>
+    <a n="x509UserProxyFirstFQAN"><s>/SBGrid/Role=NULL/Capability=NULL</s></a>
+    <a n="LocalSysCpu"><r>0.000000000000000E+00</r></a>
+    <a n="PeriodicRelease"><b v="f"/></a>
+    <a n="CumulativeSuspensionTime"><i>0</i></a>
+    <a n="DiskUsage"><i>375000</i></a>
+    <a n="TransferInput"><s>../den_refine.inp,../cns.tar.bz2,../data.tar.bz2</s></a>
+    <a n="JobLeaseDuration"><i>1200</i></a>
+    <a n="UserLog"><s>/home/odonovan/den/den_jobs_mk6_repeat/rd_03_0.2_300/cden_results_03_0.2_300.log</s></a>
+    <a n="RemoteSlotID"><i>1</i></a>
+    <a n="MachineAttrSlotWeight0"><i>1</i></a>
+    <a n="ExecutableSize"><i>2</i></a>
+    <a n="MaxHosts"><i>1</i></a>
+    <a n="CoreSize"><i>0</i></a>
+    <a n="ServerTime"><i>1297042785</i></a>
+    <a n="DiskUsage_RAW"><i>371336</i></a>
+    <a n="ProcId"><i>0</i></a>
+    <a n="TransferFiles"><s>ONEXIT</s></a>
+    <a n="CommittedTime"><i>0</i></a>
+    <a n="ShouldTransferFiles"><s>YES</s></a>
+    <a n="TotalSuspensions"><i>0</i></a>
+    <a n="Err"><s>cden_results_03_0.2_300.stderr</s></a>
+    <a n="ResidentSetSize"><i>257560</i></a>
+    <a n="WallClockCheckpoint"><i>10703</i></a>
+    <a n="x509userproxysubject"><s>/DC=org/DC=doegrids/OU=People/CN=Daniel J. O'Donovan 111490</s></a>
+    <a n="WantMatchDiagnostics"><b v="t"/></a>
+    <a n="LastMatchTime"><i>1297028525</i></a>
+    <a n="RequestCpus"><i>1</i></a>
+    <a n="StreamErr"><b v="f"/></a>
+    <a n="x509UserProxyExpiration"><i>1298107873</i></a>
+    <a n="RemoteWallClockTime"><r>0.000000000000000E+00</r></a>
+    <a n="NiceUser"><b v="f"/></a>
+    <a n="QDate"><i>1297028387</i></a>
+    <a n="PeriodicHold"><b v="f"/></a>
+    <a n="LastRejMatchReason"><s>no match found</s></a>
+    <a n="Rank"><r>0.000000000000000E+00</r></a>
+    <a n="OnExitHold"><b v="f"/></a>
+    <a n="ExitBySignal"><b v="f"/></a>
+    <a n="CondorPlatform"><s>$CondorPlatform: X86_64-LINUX_RHEL5 $</s></a>
+    <a n="MachineAttrCpus0"><i>1</i></a>
+    <a n="JobPrio"><i>96</i></a>
+    <a n="LastSuspensionTime"><i>0</i></a>
+    <a n="TransferOutput"><s>cden_refine_03_0.2_300.tar.gz</s></a>
+    <a n="Args"><s>03 0.2 300</s></a>
+    <a n="CurrentTime"><e>time()</e></a>
+    <a n="User"><s>odonovan@glidein.nebiogrid.org</s></a>
+    <a n="JobNotification"><i>3</i></a>
+    <a n="x509userproxy"><s>/home/odonovan/.globus/x509up_u1042</s></a>
+    <a n="NotifyUser"><s>odonovan@hkl.hms.harvard.edu</s></a>
+    <a n="JobRunCount"><i>1</i></a>
+    <a n="BufferSize"><i>524288</i></a>
+    <a n="WantRemoteSyscalls"><b v="f"/></a>
+    <a n="ExitStatus"><i>0</i></a>
+    <a n="LeaveJobInQueue"><b v="f"/></a>
+    <a n="StartdPrincipal"><s>execute-side@matchsession/129.93.239.148</s></a>
+    <a n="CompletionDate"><i>0</i></a>
+    <a n="Requirements"><e>( ( Arch == "X86_64" ) &amp;&amp; ( OpSys == "LINUX" ) ) &amp;&amp; ( ( Memory &gt;= 1 ) ) &amp;&amp; ( TARGET.Disk &gt;= DiskUsage ) &amp;&amp; ( ( RequestMemory * 1024 ) &gt;= ImageSize ) &amp;&amp; ( TARGET.HasFileTransfer )</e></a>
+    <a n="WantCheckpoint"><b v="f"/></a>
+    <a n="Owner"><s>odonovan</s></a>
+    <a n="TransferIn"><b v="f"/></a>
+    <a n="LastJobStatus"><i>1</i></a>
+</c>
+
+
+</classads>
+
