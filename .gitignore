@@ -1,3 +1,6 @@
 ## Ignore these files
 ## python compiled files
 *.pyc
+
+## xml debug fikes
+*.xml
