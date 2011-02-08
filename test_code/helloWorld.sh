@@ -20,6 +20,8 @@ echo "*** Running as: $0" "$@"
 # Stderr testing
 echo "&&& This is sent to standard error" 1>&2
 
+echo "sleep 60"
+
 # checking for transferred files
 echo "This should be returned" >> results_data_out
 echo `cat input.txt` >> results_data_out

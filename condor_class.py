@@ -16,7 +16,10 @@ import xml.dom.minidom
 from condor_submit_template import createSubmitScript
 
 class CondorJob(object):
-  """ Simple class to cover a single Condor Job """
+  """ Simple class to cover a single Condor Job 
+      should be able  to begin execution
+                      log and update job status
+  """
 
   def __init__(self, executable, x509userproxy, arguments, 
         outputFile=None, errorFile=None, logFile=None, initialDir='.',
@@ -73,6 +76,8 @@ class CondorJob(object):
     # non condor parameters
     self.submitted  = False
     self.condor_id  = None
+
+    self.job_status = None
 
   def _call_condor( self, args ):
     """ Generic function for calling host OS (and so condor) """
@@ -140,13 +145,35 @@ class CondorJob(object):
     """ Checks to see if the job is running, idle, held or done
     """
 
-    (stdOut, stdErr) = self._call_condor( ['condor_q', '-xml', self.condor_id] )
+    (stdOut, stdErr) = self._call_condor( [ 'condor_q', '-format', 
+                                            '%s', 'substr("?IRXCH",JobStatus,1)', 
+                                            '%f' % self.condor_id] )
+    stdOut = stdOut[0]
+
+    # (stdOut, stdErr) = self._call_condor( ['condor_q', '-xml', self.condor_id] )
+    # dom = xml.dom.minidom.parseString( stdOut )
 
     if len( stdErr ) != 0:
       print '&&& CondorJob %s reported status error:\n%s' % (self.internal_id_str, stdErr)
       return
 
-    dom = xml.dom.minidom.parseString( stdOut )
+    if len( stdOut ) == 0:
+      print '&&& CondorJob %s completed' % (self.internal_id_str)
+      self.job_status = 'Completed'
+    elif stdOut == 'I':
+      print '&&& CondorJob %s idle' % (self.internal_id_str)
+      self.job_status = 'Idle'
+    elif stdOut == 'R':
+      print '&&& CondorJob %s running' % (self.internal_id_str)
+      self.job_status = 'Running'
+    elif stdOut == 'H':
+      print '&&& CondorJob %s held' % (self.internal_id_str)
+      self.job_status = 'Held'
+    else:
+      print '&&& CondorJob %s unknown status %s' % (self.internal_id_str, stdOut)
+      self.job_status = 'Unknown: %s' % stdOut
+
+
 
 
 
