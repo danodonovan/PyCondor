@@ -174,8 +174,11 @@ class CondorJob(object):
       self.job_status = 'Unknown: %s' % stdOut
 
 
+  def kill( self ):
+    """ Kill job """
 
+    (stdOut, stdErr) = self._call_condor( ['condor_rm', '%f' % self.condor_id] )
 
-
-
-
+    if len( stdErr ) != 0:
+      print '&&& CondorJob %s not killed, error:\n%s' % (self.internal_id_str, stdErr)
+      return
