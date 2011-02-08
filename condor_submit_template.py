@@ -67,7 +67,7 @@ def createSubmitScript( job ):
       otherString += '%s = %s' % key, job.c_Other[key]
 
   submitString = submitTemplate.safe_substitute(
-    today           = time.strftime('%a, %d %b %Y %H:%M:%S %Z', time.localtime())
+    today           = time.strftime('%a, %d %b %Y %H:%M:%S %Z', time.localtime()),
     executable      = job.c_Executable,
     timeout         = job.c_Timeout,
     x509userproxy   = job.c_X509userproxy,
