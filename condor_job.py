@@ -11,22 +11,11 @@ import os
 import random, time
 import subprocess
 
-class CondorJob(object):
-    """ Simple Class - given that we already have a valid submission 
-        script, submit it and track it.
+class JobModel(object):
+    """ Model for tracking in database
     """
-
-    def __init__(self, script, **kwargs ):
-        super(CondorJob, self).__init__()
-
-        self.verbose = 'verbose' in kwargs.keys()
-
-        if not os.path.isfile( script ):
-            if self.verbose:
-                print '&&& Cannot find file %s' % script
-            raise
-        else:
-            self.script = script
+    def __init__(self):
+        super(JobModel, self).__init__()
 
         ## setting non-condor parameters
         # sort of unique ID to keep track of job
@@ -58,6 +47,24 @@ class CondorJob(object):
         stdErr = submit.stderr.read()
 
         return (stdOut, stdErr)
+
+
+class CondorJob(JobModel):
+    """ Simple Class - given that we already have a valid submission 
+        script, submit it and track it.
+    """
+
+    def __init__(self, script, **kwargs ):
+        super(CondorJob, self).__init__()
+
+        self.verbose = 'verbose' in kwargs.keys()
+
+        if not os.path.isfile( script ):
+            if self.verbose:
+                print '&&& Cannot find file %s' % script
+            raise
+        else:
+            self.script = script
 
 
     def submit( self ):
