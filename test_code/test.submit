@@ -16,7 +16,7 @@ Notify_User             =
 
 Universe                = vanilla
 Should_transfer_files   = NO
-When_to_transfer_output = ON_EXIT
+#When_to_transfer_output = ON_EXIT
 Periodic_remove         = ((JobStatus == 2) && ((CurrentTime - EnteredCurrentStatus) > $(Timeout) ))
 Requirements            = (Arch == "X86_64") && (OpSys == "LINUX")
 
