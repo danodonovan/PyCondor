@@ -1,0 +1,10 @@
+PyCondor
+========
+
+This is (currently) and short and sweet effort to access condor and DAGMan job
+managament from within python.
+
+Plan
+----
+
+To use subprocess execution to platform condor.
