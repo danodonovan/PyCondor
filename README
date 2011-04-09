@@ -2,9 +2,43 @@ PyCondor
 ========
 
 This is (currently) and short and sweet effort to access condor and DAGMan job
-managament from within python.
+managament from within python. Current plan: to use subprocess execution to 
+platform condor.
 
 Plan
 ----
+condor_class: # should be renamed
 
-To use subprocess execution to platform condor.
+	init with keyword args (covering args in submit file)
+
+		required kwargs are set into self.args
+
+		if required kwarg is missing sensible default set
+		else raise error
+
+		non-required kwargs also set
+			- is this daft? Maybe have set of possibles and if non-required and 
+			possible then set?
+
+		non-condor args set
+
+	_call_condor args
+
+		internal function which calls system condor
+			- possibly use condor_settings file to initiate paths etc.
+
+	submit
+
+	status
+
+	kill
+
+To Be Considered
+----------------
+	How do we handle multiple jobs
+
+	How do we handle DAGs
+
+	What other classes are needed, and where is the inheritance
+
+
