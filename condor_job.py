@@ -14,8 +14,8 @@ import subprocess
 class JobModel(object):
     """ Model for tracking in database
     """
-    def __init__(self):
-        super(JobModel, self).__init__()
+    def __init__(self, db_path=None):
+        #super(JobModel, self).__init__()
 
         ## setting non-condor parameters
         # sort of unique ID to keep track of job
@@ -28,6 +28,18 @@ class JobModel(object):
 
         self.job_status = None
 
+        if not db_path:
+            self._init_db()
+        else:
+            self._attach_db( db_path )
+
+    def _init_db( self ):
+        """ Initiate the DB for condor job tracking """
+        print 'Initiating'
+
+    def _attach_db( self, path ):
+        """ Attach to existing DB for condor job tracking """
+        print 'Attaching %s' % path
 
     def _call_condor( self, args ):
         """ Generic function for calling host OS (and so condor) """
@@ -55,7 +67,11 @@ class CondorJob(JobModel):
     """
 
     def __init__(self, script, **kwargs ):
-        super(CondorJob, self).__init__()
+        #super(CondorJob, self).__init__()
+        if 'db_path' in kwargs:
+            JobModel.__init__(self, kwargs['db_path'] )
+        else:
+            JobModel.__init__(self)
 
         self.verbose = 'verbose' in kwargs.keys()
 
@@ -84,7 +100,7 @@ class CondorJob(JobModel):
         else:
             if self.verbose:
                 print '&&& CondorJob %s reported submission error:\n%s' % (self.internal_id_str, stdErr)
-            raise( IOError )
+            raise
 
         if len( stdOut ) > 1:
             """ Successful submit looks something like
@@ -164,7 +180,8 @@ class CondorJob(JobModel):
 
 if __name__ == '__main__':
 
-    job = CondorJob( 'test_code/test.submit', verbose=True)
+    #job = CondorJob( 'test_code/test.submit', verbose=True)
+    job = CondorJob( 'test_code/test.submit', db_path='/here/db', verbose=True)
 
     print job.internal_id_str
 
