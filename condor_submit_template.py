@@ -58,37 +58,37 @@ Queue
 
 def createSubmitScript( job ):
 
-  submitTemplate = string.Template( template )
+    submitTemplate = string.Template( template )
 
-  # add any extra arguments that aren't in the template
-  otherString = '\n'
-  if job.c_Other:
-    for key in job.c_Other.keys():
-      otherString += '%s = %s' % key, job.c_Other[key]
+    # add any extra arguments that aren't in the template
+    otherString = '\n'
+    if job.c_Other:
+        for key in job.c_Other.keys():
+            otherString += '%s = %s' % key, job.c_Other[key]
 
-  submitString = submitTemplate.safe_substitute(
-    today           = time.strftime('%a, %d %b %Y %H:%M:%S %Z', time.localtime()),
-    executable      = job.c_Executable,
-    timeout         = job.c_Timeout,
-    x509userproxy   = job.c_X509userproxy,
-    priority        = job.c_Priority,
-    notification    = job.c_Notification,
-    notify_user     = job.c_Notify_User,
-    universe        = job.c_Universe,
-    should_transfer_files   = job.c_Should_transfer_files,
-    when_to_transfer_output = job.c_When_to_transfer_output,
-    periodic_remove = job.c_Periodic_remove,
-    requirements    = job.c_Requirements,
-    arguments       = ' '.join( job.c_Arguments ),
-    output          = job.c_Output,
-    error           = job.c_Error,
-    log             = job.c_Log,
-    initialdir      = job.c_initialdir,
-    transfer_input_files    = ', '.join(job.c_Transfer_input_files),
-    transfer_output_files   = ', '.join(job.c_Transfer_output_files),
-    other           = otherString, )
+    submitString = submitTemplate.safe_substitute(
+        today           = time.strftime('%a, %d %b %Y %H:%M:%S %Z', time.localtime()),
+        executable      = job.c_Executable,
+        timeout         = job.c_Timeout,
+        x509userproxy   = job.c_X509userproxy,
+        priority        = job.c_Priority,
+        notification    = job.c_Notification,
+        notify_user     = job.c_Notify_User,
+        universe        = job.c_Universe,
+        should_transfer_files   = job.c_Should_transfer_files,
+        when_to_transfer_output = job.c_When_to_transfer_output,
+        periodic_remove = job.c_Periodic_remove,
+        requirements    = job.c_Requirements,
+        arguments       = ' '.join( job.c_Arguments ),
+        output          = job.c_Output,
+        error           = job.c_Error,
+        log             = job.c_Log,
+        initialdir      = job.c_initialdir,
+        transfer_input_files    = ', '.join(job.c_Transfer_input_files),
+        transfer_output_files   = ', '.join(job.c_Transfer_output_files),
+        other           = otherString, )
 
-  return submitString
+    return submitString
 
 
 
