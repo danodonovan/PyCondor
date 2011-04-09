@@ -11,7 +11,7 @@ import sys, os
 import subprocess, time, random
 import tempfile
 
-import xml.dom.minidom
+# import xml.dom.minidom
 
 from condor_submit_template import createSubmitScript
 
