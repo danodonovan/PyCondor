@@ -11,11 +11,12 @@ import os
 import random, time
 import subprocess
 
+import anydbm
+
 class JobModel(object):
     """ Model for tracking in database
     """
     def __init__(self, db_path=None):
-        #super(JobModel, self).__init__()
 
         ## setting non-condor parameters
         # sort of unique ID to keep track of job
@@ -29,17 +30,13 @@ class JobModel(object):
         self.job_status = None
 
         if not db_path:
-            self._init_db()
+            self._open_db( 'dev.db' )
         else:
-            self._attach_db( db_path )
+            self._open_db( db_path )
 
-    def _init_db( self ):
-        """ Initiate the DB for condor job tracking """
-        print 'Initiating'
-
-    def _attach_db( self, path ):
-        """ Attach to existing DB for condor job tracking """
-        print 'Attaching %s' % path
+    def _open_db( self, path ):
+        """ Open the DB for condor job tracking """
+	self.db = anydbm.open(path, 'c')
 
     def _call_condor( self, args ):
         """ Generic function for calling host OS (and so condor) """
@@ -115,6 +112,9 @@ class CondorJob(JobModel):
                         print '&&& %s' % line
                 raise
 
+            self.db[str(self.condor_id)] = 'started %s' % time.time()
+
+
     def status( self ):
         """ Checks to see if the job is running, idle, held or done
         """
@@ -155,6 +155,8 @@ class CondorJob(JobModel):
                 print '&&& CondorJob %s undetermined status %s' % (self.internal_id_str, stdOut)
             self.job_status = 'Unknown: %s' % stdOut
 
+        self.db[str(self.condor_id)] = '%s %s' % ( self.job_status, time.time() )
+
 
     def kill( self, onlyIfHeld=False ):
         """ Kill job """
@@ -171,6 +173,7 @@ class CondorJob(JobModel):
                 print '&&& CondorJob %s not killed, error:\n%s' % (self.internal_id_str, stdErr)
             return
 
+        self.db[str(self.condor_id)] = '%s %s' % ( 'killed', time.time() )
 
 
 
@@ -180,8 +183,7 @@ class CondorJob(JobModel):
 
 if __name__ == '__main__':
 
-    #job = CondorJob( 'test_code/test.submit', verbose=True)
-    job = CondorJob( 'test_code/test.submit', db_path='/here/db', verbose=True)
+    job = CondorJob( 'test_code/test.submit', db_path='job.db', verbose=True)
 
     print job.internal_id_str
 
