@@ -84,7 +84,7 @@ class CondorJob(JobModel):
         else:
             if self.verbose:
                 print '&&& CondorJob %s reported submission error:\n%s' % (self.internal_id_str, stdErr)
-            raise
+            raise( IOError )
 
         if len( stdOut ) > 1:
             """ Successful submit looks something like
