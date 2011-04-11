@@ -14,7 +14,7 @@ import subprocess
 class JobModel(object):
     """ Model for tracking in database
     """
-    def __init__(self):
+    def __init__(self, **kwargs):
         super(JobModel, self).__init__()
 
         ## setting non-condor parameters
@@ -28,6 +28,19 @@ class JobModel(object):
 
         self.job_status = None
 
+        if 'db_path' not in kwargs:
+            self._init_db()
+        else:
+            self._attach_db( kwargs['db_path'] )
+            kwargs.pop( 'db_path' )
+
+    def _init_db( self ):
+        """ Initiate the DB for condor job tracking """
+        print 'Initiating'
+
+    def _attach_db( self, path ):
+        """ Attach to existing DB for condor job tracking """
+        print 'Attaching %s' % path
 
     def _call_condor( self, args ):
         """ Generic function for calling host OS (and so condor) """
