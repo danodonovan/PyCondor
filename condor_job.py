@@ -11,11 +11,14 @@ import os
 import random, time
 import subprocess
 
+import anydbm
+
 class JobModel(object):
-    """ Model for tracking in database
+    """ Model for tracking in database: 
+            Will start a new default DB if one is not specified
+            or specified DB is not found. 
     """
-    def __init__(self, **kwargs):
-        super(JobModel, self).__init__()
+    def __init__(self, db_path=None):
 
         ## setting non-condor parameters
         # sort of unique ID to keep track of job
@@ -28,19 +31,22 @@ class JobModel(object):
 
         self.job_status = None
 
-        if 'db_path' not in kwargs:
-            self._init_db()
+        if not db_path:
+            self._open_db( 'dev.db' )
         else:
-            self._attach_db( kwargs['db_path'] )
-            kwargs.pop( 'db_path' )
+            self._open_db( db_path )
 
-    def _init_db( self ):
-        """ Initiate the DB for condor job tracking """
-        print 'Initiating'
+    def __repr__( self ):
+        return "JobModel()"
 
-    def _attach_db( self, path ):
-        """ Attach to existing DB for condor job tracking """
-        print 'Attaching %s' % path
+    def __str__(self):
+        if self.condor_id:
+            return "JobModel: condor %f - %s" % ( self.condor_id, self._read_state() )
+        return "JobModel: %s - %s" % ( self.internal_id, self._read_state() )
+
+    def _open_db( self, path ):
+        """ Open the DB for condor job tracking """
+        self.db = anydbm.open(path, 'c')
 
     def _call_condor( self, args ):
         """ Generic function for calling host OS (and so condor) """
@@ -61,6 +67,14 @@ class JobModel(object):
 
         return (stdOut, stdErr)
 
+    def _store_state( self, info ):
+        """ Store the current state information for this job """
+        now = time.strftime('%Y%b%d_%H-%M-%S', time.gmtime())
+        self.db[ self.internal_id_str ] = '%s : %s' % ( str( info ), now)
+
+    def _read_state( self ):
+        """ Read and return the current state information for this job """
+        return self.db[ self.internal_id_str ]
 
 class CondorJob(JobModel):
     """ Simple Class - given that we already have a valid submission 
@@ -68,7 +82,11 @@ class CondorJob(JobModel):
     """
 
     def __init__(self, script, **kwargs ):
-        super(CondorJob, self).__init__()
+        #super(CondorJob, self).__init__()
+        if 'db_path' in kwargs:
+            JobModel.__init__(self, kwargs['db_path'] )
+        else:
+            JobModel.__init__(self)
 
         self.verbose = 'verbose' in kwargs.keys()
 
@@ -94,9 +112,11 @@ class CondorJob(JobModel):
 
         if len( stdErr ) == 0:
             self.submitted = True
+            self._store_state( 'Job submitted' )
         else:
             if self.verbose:
                 print '&&& CondorJob %s reported submission error:\n%s' % (self.internal_id_str, stdErr)
+                self._store_state( 'Job submit failed' )
             raise
 
         if len( stdOut ) > 1:
@@ -110,7 +130,9 @@ class CondorJob(JobModel):
                     print '&&& Unexpected output from condor_submit:'
                     for line in stdOut:
                         print '&&& %s' % line
+                    self._store_state( stdOut )
                 raise
+
 
     def status( self ):
         """ Checks to see if the job is running, idle, held or done
@@ -152,6 +174,8 @@ class CondorJob(JobModel):
                 print '&&& CondorJob %s undetermined status %s' % (self.internal_id_str, stdOut)
             self.job_status = 'Unknown: %s' % stdOut
 
+        self._store_state( self.job_status )
+
 
     def kill( self, onlyIfHeld=False ):
         """ Kill job """
@@ -168,7 +192,7 @@ class CondorJob(JobModel):
                 print '&&& CondorJob %s not killed, error:\n%s' % (self.internal_id_str, stdErr)
             return
 
-
+        self._store_state( 'Job killed' )
 
 
 
@@ -177,12 +201,18 @@ class CondorJob(JobModel):
 
 if __name__ == '__main__':
 
-    job = CondorJob( 'test_code/test.submit', verbose=True)
+    job = CondorJob( 'test_code/test.submit', db_path='job.db', verbose=True)
 
     print job.internal_id_str
 
     job.submit()
+    print job
 
     time.sleep( 10 )
 
     job.status()
+    print job
+
+    time.sleep( 20 )
+
+    print job

@@ -1,4 +1,4 @@
-Executable              = ./test.sh
+Executable              = helloWorld.sh
 Output                  = log.stdout
 Error                   = log.stderr
 Log                     = log.log
