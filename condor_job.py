@@ -24,7 +24,7 @@ class JobModel(object):
         # sort of unique ID to keep track of job
         rand                  = random.uniform( 0., 1. )
         self.internal_id      = time.time() + rand
-        self.internal_id_str  = time.strftime('%Y%b%d_%H-%M-%S', time.gmtime()) + '6.5%f' % rand
+        self.internal_id_str  = time.strftime('%Y.%b.%d:%H-%M-%S', time.gmtime()) + '6.5%f' % rand
         # non condor parameters
         self.submitted  = False
         self.condor_id  = None
@@ -41,7 +41,7 @@ class JobModel(object):
 
     def __str__(self):
         if self.condor_id:
-            return "JobModel: condor %f - %s" % ( self.condor_id, self._read_state() )
+            return "JobModel: condor %10.1f - %s" % ( self.condor_id, self._read_state() )
         return "JobModel: %s - %s" % ( self.internal_id, self._read_state() )
 
     def _open_db( self, path ):
@@ -201,7 +201,7 @@ class CondorJob(JobModel):
 
 if __name__ == '__main__':
 
-    job = CondorJob( 'test_code/test.submit', db_path='job.db', verbose=True)
+    job = CondorJob( 'test.submit', db_path='job.db', verbose=True)
 
     print job.internal_id_str
 

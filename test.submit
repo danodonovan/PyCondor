@@ -4,7 +4,7 @@ Error                   = log.stderr
 Log                     = log.log
 Should_transfer_files   = YES
 When_to_transfer_output = ON_EXIT
-Transfer_output_files   = output_file
+Transfer_output_files   = results_data_out
 Notification            = Never
 Priority                = 10
 Requirements            = (Arch == "X86_64") && (OpSys == "LINUX")
