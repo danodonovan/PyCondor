@@ -14,7 +14,9 @@ import subprocess
 import anydbm
 
 class JobModel(object):
-    """ Model for tracking in database
+    """ Model for tracking in database: 
+            Will start a new default DB if one is not specified
+            or specified DB is not found. 
     """
     def __init__(self, db_path=None):
 
@@ -34,9 +36,17 @@ class JobModel(object):
         else:
             self._open_db( db_path )
 
+    def __repr__( self ):
+        return "JobModel()"
+
+    def __str__(self):
+        if self.condor_id:
+            return "JobModel: condor %f - %s" % ( self.condor_id, self._read_state() )
+        return "JobModel: %s - %s" % ( self.internal_id, self._read_state() )
+
     def _open_db( self, path ):
         """ Open the DB for condor job tracking """
-	self.db = anydbm.open(path, 'c')
+        self.db = anydbm.open(path, 'c')
 
     def _call_condor( self, args ):
         """ Generic function for calling host OS (and so condor) """
@@ -57,6 +67,14 @@ class JobModel(object):
 
         return (stdOut, stdErr)
 
+    def _store_state( self, info ):
+        """ Store the current state information for this job """
+        now = time.strftime('%Y%b%d_%H-%M-%S', time.gmtime())
+        self.db[ self.internal_id_str ] = '%s : %s' % ( str( info ), now)
+
+    def _read_state( self ):
+        """ Read and return the current state information for this job """
+        return self.db[ self.internal_id_str ]
 
 class CondorJob(JobModel):
     """ Simple Class - given that we already have a valid submission 
@@ -94,9 +112,11 @@ class CondorJob(JobModel):
 
         if len( stdErr ) == 0:
             self.submitted = True
+            self._store_state( 'Job submitted' )
         else:
             if self.verbose:
                 print '&&& CondorJob %s reported submission error:\n%s' % (self.internal_id_str, stdErr)
+                self._store_state( 'Job submit failed' )
             raise
 
         if len( stdOut ) > 1:
@@ -110,9 +130,8 @@ class CondorJob(JobModel):
                     print '&&& Unexpected output from condor_submit:'
                     for line in stdOut:
                         print '&&& %s' % line
+                    self._store_state( stdOut )
                 raise
-
-            self.db[str(self.condor_id)] = 'started %s' % time.time()
 
 
     def status( self ):
@@ -155,7 +174,7 @@ class CondorJob(JobModel):
                 print '&&& CondorJob %s undetermined status %s' % (self.internal_id_str, stdOut)
             self.job_status = 'Unknown: %s' % stdOut
 
-        self.db[str(self.condor_id)] = '%s %s' % ( self.job_status, time.time() )
+        self._store_state( self.job_status )
 
 
     def kill( self, onlyIfHeld=False ):
@@ -173,8 +192,7 @@ class CondorJob(JobModel):
                 print '&&& CondorJob %s not killed, error:\n%s' % (self.internal_id_str, stdErr)
             return
 
-        self.db[str(self.condor_id)] = '%s %s' % ( 'killed', time.time() )
-
+        self._store_state( 'Job killed' )
 
 
 
@@ -188,7 +206,13 @@ if __name__ == '__main__':
     print job.internal_id_str
 
     job.submit()
+    print job
 
     time.sleep( 10 )
 
     job.status()
+    print job
+
+    time.sleep( 20 )
+
+    print job
