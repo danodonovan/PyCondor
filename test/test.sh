@@ -8,6 +8,7 @@ E_BADARGS=-1
 if [ $# -ne $EXPECTED_ARGS ]
 then
   echo "Usage: `basename $0` {arg 1} {arg 2} {arg 3}"
+  echo "ERROR - need to supply arguments!!" >> results_data_out
   exit $E_BADARGS
 fi
 

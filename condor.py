@@ -29,12 +29,16 @@ condor_submit_success_string = 'job(s) submitted to cluster'
 class CondorDbInfo:
     """ Class to hold information about the condor job 
     """
-    def __init__(self, condor_id, parent_id ):
+    def __init__(self, condor_id, parent_id, **kwargs ):
 
         self.condor_id = condor_id
         self.parent_id = parent_id
         self.status_history = []
         self.current_status = 'New job'
+        self.notes = {}
+
+        for key in kwargs:
+            self.notes[key] = kwargs[key]
 
     def __repr__( self ):
         return "CondorDbInfo()"
@@ -112,28 +116,6 @@ class BaseJobModel(object):
         """ Read and return the current state information for this job """
         if self.info: return self.db[ str(self.info.condor_id) ]
 
-
-class CondorJob(BaseJobModel):
-    """ Simple Class - given that we already have a valid submission 
-        script, submit it and track it.
-    """
-
-    def __init__(self, script, **kwargs ):
-
-        if 'db_path' in kwargs:
-            BaseJobModel.__init__(self, kwargs['db_path'] )
-        else:
-            BaseJobModel.__init__(self)
-
-        self.verbose = 'verbose' in kwargs.keys()
-
-        if not os.path.isfile( script ):
-            if self.verbose:
-                print 'DEBUG Cannot find file %s' % script
-            raise
-        else:
-            self.script = script
-
     def submit( self ):
         """ Submits a condor job to using the script provided to init
             - simply calls condor_submit on given submission script
@@ -151,7 +133,7 @@ class CondorJob(BaseJobModel):
 
         else:
             if self.verbose:
-                print 'DEBUG Unexpected output from condor_submit:'
+                print 'DEBUG Unexpected output from %s:' % submit_exe
                 for line in stdOut:
                     print 'DEBUG %s' % line
             return
@@ -160,6 +142,8 @@ class CondorJob(BaseJobModel):
         self.info.record( 'Submitted' )
         self._store_state()
 
+
+    ## These functions should not be tied to a given condor / dag type
     def status( self ):
         """ Checks to see if the job is running, idle, held or done
         """
@@ -217,6 +201,27 @@ class CondorJob(BaseJobModel):
         self.info.record( job_status )
         self._store_state()
 
+
+class CondorJob(BaseJobModel):
+    """ Simple Class - given that we already have a valid submission 
+        script, submit it and track it.
+    """
+
+    def __init__(self, script, **kwargs ):
+
+        if 'db_path' in kwargs:
+            BaseJobModel.__init__(self, kwargs['db_path'] )
+        else:
+            BaseJobModel.__init__(self)
+
+        self.verbose = 'verbose' in kwargs.keys()
+
+        if not os.path.isfile( script ):
+            if self.verbose:
+                print 'DEBUG Cannot find file %s' % script
+            raise
+        else:
+            self.script = script
 
 
 if __name__ == '__main__':
