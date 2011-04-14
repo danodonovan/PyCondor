@@ -17,14 +17,6 @@ import subprocess
 # import anydbm as db_manager
 import shelve as db_manager
 
-# import unittest
-# 
-# class untitledTests(unittest.TestCase):
-#     def setUp(self):
-#         pass
-
-submit_exe = 'condor_submit'
-condor_submit_success_string = 'job(s) submitted to cluster'
 
 class CondorDbInfo:
     """ Class to hold information about the condor job 
@@ -66,7 +58,7 @@ class BaseJobModel(object):
             Will start a new default DB if one is not specified
             or specified DB is not found. 
     """
-    def __init__(self, db_path=None):
+    def __init__(self, script, db_path=None):
 
         # non condor parameters
         self.info = None
@@ -75,6 +67,16 @@ class BaseJobModel(object):
             self._open_db( 'dev.db' )
         else:
             self._open_db( db_path )
+
+        if not os.path.isfile( script ):
+            if self.verbose:
+                print 'DEBUG Cannot find file %s' % script
+            raise
+        else:
+            self.script = script
+
+        self.condor_submit_success_string   = 'job(s) submitted to cluster'
+        self.condor_log_string              = None
 
     def __repr__( self ):
         return "BaseJobModel()"
@@ -122,25 +124,32 @@ class BaseJobModel(object):
             - collects condor job id if successful
         """
 
-        (stdOut, stdErr) = self._call_condor( [submit_exe, self.script] )
+        (stdOut, stdErr) = self._call_condor( [self.submit_exe, self.script] )
 
-        if not len(stdErr) and len(stdOut):
-            for line in stdOut:
-                if line.find(condor_submit_success_string) > 0:
-                    condor_id = float( line.split(condor_submit_success_string)[-1] )
-                    parent_id = None
-                    self.info = CondorDbInfo( condor_id, parent_id )
+        (condor_id, parent_id) = self._parse_submit_output( stdOut, stdErr )
 
-        else:
-            if self.verbose:
-                print 'DEBUG Unexpected output from %s:' % submit_exe
-                for line in stdOut:
-                    print 'DEBUG %s' % line
-            return
+        self.info = CondorDbInfo( condor_id, parent_id )
 
         # store state of job
         self.info.record( 'Submitted' )
         self._store_state()
+
+    def _parse_submit_output(self, stdOut, stdErr):
+
+        if not len(stdErr) and len(stdOut):
+            for line in stdOut:
+                if line.find(self.condor_submit_success_string) > 0:
+                    condor_id = float( line.split(self.condor_submit_success_string)[-1] )
+                    parent_id = None
+
+        else:
+            if self.verbose:
+                print 'DEBUG Unexpected output from %s:' % self.submit_exe
+                for line in stdOut:
+                    print 'DEBUG %s' % line
+            return (None, None)
+
+        return (condor_id, parent_id)
 
 
     ## These functions should not be tied to a given condor / dag type
@@ -167,11 +176,19 @@ class BaseJobModel(object):
 
         if not len( stdOut ):   job_status = 'Completed'
 
+        elif stdOut == 'U':     job_status = 'Unexpanded'
+
         elif stdOut == 'I':     job_status = 'Idle'
 
         elif stdOut == 'R':     job_status = 'Running'
 
+        elif stdOut == 'X':     job_status = 'Removed'
+
+        elif stdOut == 'C':     job_status = 'Completed'
+
         elif stdOut == 'H':     job_status = 'Held'
+
+        elif stdOut == 'E':     job_status = 'Submission_err'
 
         else:                   job_status = 'Unknown: %s' % stdOut
 
@@ -202,6 +219,7 @@ class BaseJobModel(object):
         self._store_state()
 
 
+
 class CondorJob(BaseJobModel):
     """ Simple Class - given that we already have a valid submission 
         script, submit it and track it.
@@ -210,18 +228,13 @@ class CondorJob(BaseJobModel):
     def __init__(self, script, **kwargs ):
 
         if 'db_path' in kwargs:
-            BaseJobModel.__init__(self, kwargs['db_path'] )
+            BaseJobModel.__init__(self, script, kwargs['db_path'] )
         else:
-            BaseJobModel.__init__(self)
+            BaseJobModel.__init__(self, script)
 
         self.verbose = 'verbose' in kwargs.keys()
 
-        if not os.path.isfile( script ):
-            if self.verbose:
-                print 'DEBUG Cannot find file %s' % script
-            raise
-        else:
-            self.script = script
+        self.submit_exe = 'condor_submit'
 
 
 if __name__ == '__main__':
