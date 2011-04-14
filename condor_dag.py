@@ -38,7 +38,7 @@ class CondorDag(BaseJobModel):
         if self.verbose: print 'DEBUG stdOut %s' % stdOut
         if self.verbose: print 'DEBUG stdErr %s' % stdErr
 
-        condor_id = None
+        (condor_id, parent_id) = (None, None)
 
         if not len(stdErr) and len(stdOut):
             for line in stdOut:

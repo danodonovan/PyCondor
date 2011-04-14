@@ -136,6 +136,8 @@ class BaseJobModel(object):
 
     def _parse_submit_output(self, stdOut, stdErr):
 
+        (condor_id, parent_id) = (None, None)
+
         if not len(stdErr) and len(stdOut):
             for line in stdOut:
                 if line.find(self.condor_submit_success_string) > 0:
